@@ -79,9 +79,9 @@ func TestPowValid(t *testing.T) {
 	columns := 2
 	mat := MakeDenseMatrix([]float64{1, 2, 3, 4, 5, 6}, rows, columns)
 	result := mat.Pow(10)
-    //fmt.Printf("QQQ: testing mat: %v result: %v\n", mat, result);
-	if result.Get(1,0) != 59049 {
-		t.Errorf("FiltColMap expected 59049. received=%f", result.Get(1,0))
+	//fmt.Printf("QQQ: testing mat: %v result: %v\n", mat, result);
+	if result.Get(1, 0) != 59049 {
+		t.Errorf("FiltColMap expected 59049. received=%f", result.Get(1, 0))
 	}
 }
 
@@ -90,23 +90,23 @@ func TestPowValid(t *testing.T) {
 //
 // Return Value
 //
-// matches - a map[int]float64 where the key is the row number in mat, 
+// matches - a map[int]float64 where the key is the row number in mat,
 // and the value is the value in the column specified by col.
 
 func TestFiltColMapValid(t *testing.T) {
 	rows := 3
 	columns := 2
 	mat := MakeDenseMatrix([]float64{1, 2, 3, 4, 5, 6}, rows, columns)
-	matches, err := mat.FiltColMap(100,101, 1)
-    //fmt.Printf("QQQ: testing mat: %v err: %v matches: %v\n", mat, err, matches);
+	matches, err := mat.FiltColMap(100, 101, 1)
+	//fmt.Printf("QQQ: testing mat: %v err: %v matches: %v\n", mat, err, matches);
 	if err != nil {
 		t.Errorf("FiltColMap err=%v", err)
 	}
 	if len(matches) != 0 {
 		t.Errorf("FiltColMap expected 0 matches. received=%f", len(matches))
 	}
-	matches2, err2 := mat.FiltColMap(1,4, 1)
-    //fmt.Printf("QQQ: testing mat: %v err: %v matches: %v\n", mat, err2, matches2);
+	matches2, err2 := mat.FiltColMap(1, 4, 1)
+	//fmt.Printf("QQQ: testing mat: %v err: %v matches: %v\n", mat, err2, matches2);
 	if err2 != nil {
 		t.Errorf("FiltColMap err=%v", err2)
 	}
@@ -117,10 +117,10 @@ func TestFiltColMapValid(t *testing.T) {
 
 func TestFiltCol(t *testing.T) {
 	mat := MakeDenseMatrix([]float64{2, 1, 4, 2, 6, 3, 8, 4, 10, 5}, 5, 2)
-    //fmt.Printf("QQQ: ORIGINAL mat:\n %v\n", mat);
+	//fmt.Printf("QQQ: ORIGINAL mat:\n %v\n", mat);
 	// mat, max, min, column
 	matches, err := mat.FiltCol(2.0, 4.0, 1)
-    //fmt.Printf("QQQ: RESULT OF TEST matches:\n %v\n", matches);
+	//fmt.Printf("QQQ: RESULT OF TEST matches:\n %v\n", matches);
 	if err != nil {
 		t.Errorf("FiltCol returned error: %v", err)
 		return
@@ -130,33 +130,33 @@ func TestFiltCol(t *testing.T) {
 		t.Errorf("FiltCol: expected 3 rows and got %d", r)
 	}
 
-	m0 := matches.Get(0,1)
+	m0 := matches.Get(0, 1)
 	if m0 != float64(2) {
-		t.Errorf("FiltCol: expected row 0 col 1 to be 2, but got %f",m0)
+		t.Errorf("FiltCol: expected row 0 col 1 to be 2, but got %f", m0)
 	}
 
 	m1 := matches.Get(1, 1)
 	if m1 != 3 {
-		t.Errorf("FiltCol: expected row 1 col 1 to be 3, but got %f",m1)
+		t.Errorf("FiltCol: expected row 1 col 1 to be 3, but got %f", m1)
 	}
 
 	m2 := matches.Get(2, 1)
-	if m2 !=4 {
-		t.Errorf("FiltCol: expected row 1 col 1 to be 3, but got %f",m2)
+	if m2 != 4 {
+		t.Errorf("FiltCol: expected row 1 col 1 to be 3, but got %f", m2)
 	}
 	matches, err = mat.FiltCol(100.0, 200.00, 1)
-    //fmt.Printf("QQQ: testing mat: %v err: %v\n", mat, err);
+	//fmt.Printf("QQQ: testing mat: %v err: %v\n", mat, err);
 	if err == nil {
 		t.Errorf("FiltCol did not return err on no match condition.")
 	}
 }
 
 func TestFiltCol2(t *testing.T) {
-	mat := MakeDenseMatrix([]float64{2, 1, 4, 2, 6, 3, 8, 4, 10, 5, 1,1,1,1,1}, 5, 3)
-    //fmt.Printf("QQQ: ORIGINAL mat:\n %v\n", mat);
+	mat := MakeDenseMatrix([]float64{2, 1, 4, 2, 6, 3, 8, 4, 10, 5, 1, 1, 1, 1, 1}, 5, 3)
+	//fmt.Printf("QQQ: ORIGINAL mat:\n %v\n", mat);
 	// mat, max, min, column
 	matches, err := mat.FiltCol(2.0, 4.0, 1)
-    //fmt.Printf("QQQ: RESULT OF TEST matches:\n %v\n", matches);
+	//fmt.Printf("QQQ: RESULT OF TEST matches:\n %v\n", matches);
 	if err != nil {
 		t.Errorf("FiltCol returned error: %v", err)
 		return
@@ -166,24 +166,24 @@ func TestFiltCol2(t *testing.T) {
 		t.Errorf("FiltCol: expected 1 row and got %d", r)
 	}
 
-	m0 := matches.Get(0,1)
+	m0 := matches.Get(0, 1)
 	if m0 != 4 {
-		t.Errorf("FiltCol: expected row 0 col 1 to be 4, but got %f",m0)
+		t.Errorf("FiltCol: expected row 0 col 1 to be 4, but got %f", m0)
 	}
 
 	matches, err = mat.FiltCol(100.0, 200.00, 1)
-    //fmt.Printf("QQQ: testing mat: %v err: %v\n", mat, err);
+	//fmt.Printf("QQQ: testing mat: %v err: %v\n", mat, err);
 	if err == nil {
 		t.Errorf("FiltCol did not return err on no match condition.")
 	}
 }
 
 func TestFiltCol3(t *testing.T) {
-	mat := MakeDenseMatrix([]float64{2, 1, 4, 2, 6, 3, 8, 4, 10, 5, 1,1,1,1,1,1,2,3}, 6, 3)
-    //fmt.Printf("QQQ: ORIGINAL mat:\n %v\n", mat);
+	mat := MakeDenseMatrix([]float64{2, 1, 4, 2, 6, 3, 8, 4, 10, 5, 1, 1, 1, 1, 1, 1, 2, 3}, 6, 3)
+	//fmt.Printf("QQQ: ORIGINAL mat:\n %v\n", mat);
 	// mat, max, min, column
 	matches, err := mat.FiltCol(2.0, 4.0, 1)
-    //fmt.Printf("QQQ: RESULT OF TEST matches:\n %v\n", matches);
+	//fmt.Printf("QQQ: RESULT OF TEST matches:\n %v\n", matches);
 	if err != nil {
 		t.Errorf("FiltCol returned error: %v", err)
 		return
@@ -193,23 +193,22 @@ func TestFiltCol3(t *testing.T) {
 		t.Errorf("FiltCol: expected 2 rows and got %d", r)
 	}
 
-	m0 := matches.Get(0,1)
+	m0 := matches.Get(0, 1)
 	if m0 != 4 {
-		t.Errorf("FiltCol: expected row 0 col 1 to be 4, but got %f",m0)
+		t.Errorf("FiltCol: expected row 0 col 1 to be 4, but got %f", m0)
 	}
 
-	m1 := matches.Get(1,1)
+	m1 := matches.Get(1, 1)
 	if m1 != 2 {
-		t.Errorf("FiltCol: expected row 0 col 1 to be 2, but got %f",m0)
+		t.Errorf("FiltCol: expected row 0 col 1 to be 2, but got %f", m0)
 	}
 
 	matches, err = mat.FiltCol(100.0, 200.00, 1)
-    //fmt.Printf("QQQ: testing mat: %v err: %v\n", mat, err);
+	//fmt.Printf("QQQ: testing mat: %v err: %v\n", mat, err);
 	if err == nil {
 		t.Errorf("FiltCol did not return err on no match condition.")
 	}
 }
-
 
 func TestAppendColInvalid(t *testing.T) {
 	rows := 3
@@ -217,7 +216,7 @@ func TestAppendColInvalid(t *testing.T) {
 	mat := MakeDenseMatrix([]float64{1, 2, 3, 4, 5, 6}, rows, columns)
 	col := []float64{1.1, 2.2, 3.3, 4.4}
 	mat, err := mat.AppendCol(col)
-    //fmt.Printf("QQQ: testing mat: %v err: %v\n", mat, err);
+	//fmt.Printf("QQQ: testing mat: %v err: %v\n", mat, err);
 	if err == nil {
 		t.Errorf("AppendCol err=%v", err)
 	}
@@ -229,19 +228,18 @@ func TestAppendColValid(t *testing.T) {
 	mat := MakeDenseMatrix([]float64{1, 2, 3, 4, 5, 6}, rows, columns)
 	col := []float64{1.1, 2.2, 3.3}
 	mat, err := mat.AppendCol(col)
-    //fmt.Printf("QQQ: testing mat: %v err: %v\n", mat, err);
+	//fmt.Printf("QQQ: testing mat: %v err: %v\n", mat, err);
 	if err != nil {
 		t.Errorf("AppendCol err=%v", err)
 	}
 }
-
 
 func TestColSliceValid(t *testing.T) {
 	rows := 3
 	columns := 2
 	mat := MakeDenseMatrix([]float64{1, 2, 3, 4, 5, 6}, rows, columns)
 	c := mat.ColSlice(1)
-    //fmt.Printf("QQQ: testing mat: %v c: %v\n", mat, c);
+	//fmt.Printf("QQQ: testing mat: %v c: %v\n", mat, c);
 	if len(c) != rows {
 		t.Errorf("Returned slice has len=%d instead of %d.", len(c), rows)
 	}
@@ -251,7 +249,7 @@ func TestSumCol(t *testing.T) {
 	m := MakeSumMatrix()
 	b := m.SumCol(1)
 	if b != 3 {
-        t.Errorf("SumCol: Expected a sum of 3, but received %f", b)
+		t.Errorf("SumCol: Expected a sum of 3, but received %f", b)
 	}
 }
 
@@ -259,7 +257,7 @@ func TestSumCols(t *testing.T) {
 	m := MakeSumMatrix()
 	b := m.SumCols()
 	//9,3, 1, 4
-	if b.Get(0,0) != -9 || b.Get(0,1) != 3 || b.Get(0,2) != 1 || b.Get(0,3) != 4 {
+	if b.Get(0, 0) != -9 || b.Get(0, 1) != 3 || b.Get(0, 2) != 1 || b.Get(0, 3) != 4 {
 		t.Errorf("SumCols: Excpect a row vector of [9, 3, 1 ,4] but received %v.", b)
 	}
 }
@@ -267,16 +265,16 @@ func TestSumCols(t *testing.T) {
 func TestMeanCols(t *testing.T) {
 	m := MakeSumMatrix()
 	b := m.MeanCols()
-	if b.Get(0,0) != -2.25 || b.Get(0,1) != 0.75 || b.Get(0,2) != 0.25 || b.Get(0,3) != 1 {
+	if b.Get(0, 0) != -2.25 || b.Get(0, 1) != 0.75 || b.Get(0, 2) != 0.25 || b.Get(0, 3) != 1 {
 		t.Errorf("MeanCols: Excpect a row vector of [-2.25, -0.75, -0.25], 1 but received %v.", b)
 	}
-} 
+}
 
 func TestSumRows(t *testing.T) {
 	m := MakeSumMatrix()
 	b := m.SumRows()
 	//4, -5, 9, -9
-	if b.Get(0,0) != 4 || b.Get(1,0) != -5 || b.Get(2,0) != 9 || b.Get(3,0) != -9 {
+	if b.Get(0, 0) != 4 || b.Get(1, 0) != -5 || b.Get(2, 0) != 9 || b.Get(3, 0) != -9 {
 		t.Errorf("MeanCols: Excpect a row vector of [-4, -5, 9, -9] but received %v.", b)
 	}
 }
@@ -1011,21 +1009,34 @@ func TestMultipleProduct(t *testing.T) {
 
 func MakeSumMatrix() *DenseMatrix {
 	m := MakeDenseMatrix([]float64{6, -2, -4, 4,
-	                               3, -3, -6, 1,
-		                          -12, 8, 21, -8,
-		                           -6, 0, -10, 7},
+		3, -3, -6, 1,
+		-12, 8, 21, -8,
+		-6, 0, -10, 7},
 		4, 4)
-	
+
 	return m
 }
-	
+
 func TestSetRowVector(t *testing.T) {
-	src := MakeDenseMatrix([]float64{0,1,2,3}, 1, 4)
+	src := MakeDenseMatrix([]float64{0, 1, 2, 3}, 1, 4)
 	tgt := MakeDenseMatrix([]float64{99, 100, 101, 102,
-	                                    250, 251, 252, 253},
-		2,4)
+		250, 251, 252, 253},
+		2, 4)
 	tgt.SetRowVector(src, 1)
-	if tgt.Get(1,0) != 0 || tgt.Get(1,1) != 1 || tgt.Get(1,2) != 2 || tgt.Get(1,3) != 3 {
+	if tgt.Get(1, 0) != 0 || tgt.Get(1, 1) != 1 || tgt.Get(1, 2) != 2 || tgt.Get(1, 3) != 3 {
 		t.Errorf("Expected [0, 1, 2, 3, 4] in row 1 but received %v", tgt)
+	}
+}
+
+func TestDistance(t *testing.T) {
+	m := MakeSumMatrix()
+	dist := m.Distance(1.0, true)
+	if dist.Get(1, 0) != 40.0 {
+		t.Fail()
+	}
+
+	dist = m.Distance(1.0, false)
+	if dist.Get(1, 0) != 0.0 {
+		t.Fail()
 	}
 }

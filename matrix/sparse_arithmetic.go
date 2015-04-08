@@ -3,6 +3,7 @@
 // license that can be found in the LICENSE file.
 
 package matrix
+
 //import "fmt"
 
 /*
@@ -23,7 +24,7 @@ func (A *SparseMatrix) PlusSparse(B *SparseMatrix) (*SparseMatrix, error) {
 	return C, err
 }
 
-func (A *SparseMatrix) PlusSparseQuiet(B *SparseMatrix) (*SparseMatrix) {
+func (A *SparseMatrix) PlusSparseQuiet(B *SparseMatrix) *SparseMatrix {
 	C := A.Copy()
 	C.AddSparse(B)
 	return C
@@ -47,7 +48,7 @@ func (A *SparseMatrix) MinusSparse(B *SparseMatrix) (*SparseMatrix, error) {
 	return C, err
 }
 
-func (A *SparseMatrix) MinusSparseQuiet(B *SparseMatrix) (*SparseMatrix) {
+func (A *SparseMatrix) MinusSparseQuiet(B *SparseMatrix) *SparseMatrix {
 	C := A.Copy()
 	C.SubtractSparse(B)
 	return C
@@ -84,7 +85,7 @@ func (A *SparseMatrix) AddSparse(B *SparseMatrix) error {
 
 	for index, value := range B.elements {
 		i, j := B.GetRowColIndex(index)
-        //fmt.Printf("GET from B index: %v results in A: i:%v,j:%v A.Get:%v\n",index,i,j, A.Get(i,j))
+		//fmt.Printf("GET from B index: %v results in A: i:%v,j:%v A.Get:%v\n",index,i,j, A.Get(i,j))
 		A.Set(i, j, A.Get(i, j)+value)
 	}
 
@@ -121,7 +122,7 @@ func (A *SparseMatrix) SubtractSparse(B *SparseMatrix) error {
 	}
 
 	for index, value := range B.elements {
-        // this seems incorrect.  rey 9/14/2012
+		// this seems incorrect.  rey 9/14/2012
 		//i, j := A.GetRowColIndex(index)
 		i, j := B.GetRowColIndex(index)
 		A.Set(i, j, A.Get(i, j)-value)

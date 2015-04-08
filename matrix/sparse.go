@@ -64,7 +64,7 @@ func (A *SparseMatrix) GetColIndex(index int) (j int) {
 Turn an element index into a row and column number.
 */
 func (A *SparseMatrix) GetRowColIndex(index int) (i int, j int) {
-    //fmt.Printf("index: %v offset: %v step: %v i: %v\n",index,A.offset,A.step, (index-A.offset)/A.step)
+	//fmt.Printf("index: %v offset: %v step: %v i: %v\n",index,A.offset,A.step, (index-A.offset)/A.step)
 	i = (index - A.offset) / A.step
 	j = (index - A.offset) % A.step
 	return
@@ -130,19 +130,19 @@ func (A *SparseMatrix) GetMatrix(i, j, rows, cols int) (subMatrix *SparseMatrix)
 	subMatrix.rows = rows
 	subMatrix.cols = cols
 	subMatrix.offset = (i+A.offset/A.step)*A.step + (j + A.offset%A.step)
-    //fmt.Printf("Setting offset in submatrix i:%v j:%v to %v\n",i,j,subMatrix.offset)
+	//fmt.Printf("Setting offset in submatrix i:%v j:%v to %v\n",i,j,subMatrix.offset)
 	subMatrix.step = A.step
 	subMatrix.elements = A.elements
 	for index, _ := range subMatrix.elements {
 		ii, jj := subMatrix.GetRowColIndex(index)
-        //if (ii<i || ii>i+rows || jj<j || jj>j+cols){
-        //if ((ii<0 || ii>rows) && (jj<0 || jj>cols)){
-        if (ii<0 || ii>=rows || jj<0 || jj>=cols){
-            delete(subMatrix.elements, index)
-        }
-    }
+		//if (ii<i || ii>i+rows || jj<j || jj>j+cols){
+		//if ((ii<0 || ii>rows) && (jj<0 || jj>cols)){
+		if ii < 0 || ii >= rows || jj < 0 || jj >= cols {
+			delete(subMatrix.elements, index)
+		}
+	}
 	//return subMatrix
-	return 
+	return
 }
 
 /*
@@ -249,7 +249,6 @@ func ZerosSparseTrueCopy(rows int, cols int, offset int, step int) *SparseMatrix
 	return A
 }
 
-
 func ZerosSparse(rows int, cols int) *SparseMatrix {
 	A := new(SparseMatrix)
 	A.rows = rows
@@ -298,4 +297,6 @@ func (A *SparseMatrix) SparseMatrix() *SparseMatrix {
 	return A.Copy()
 }
 
-func (A *SparseMatrix) String() string { return fmt.Sprintf("elements: %v step: %v offset: [%v] REST: %v",A.elements,A.step,A.offset,String(A)) }
+func (A *SparseMatrix) String() string {
+	return fmt.Sprintf("elements: %v step: %v offset: [%v] REST: %v", A.elements, A.step, A.offset, String(A))
+}

@@ -11,53 +11,53 @@ import (
 	"fmt"
 	"math/rand"
 	"testing"
-    //"runtime/pprof"
+	//"runtime/pprof"
 )
+
 //import pprof "net/http/pprof"
 
 func TestMulStrassenRandom(t *testing.T) {
 	//n :=  2048
 	//n :=  128
-	n :=  8
+	n := 8
 
-    //
-    // ok   github.com/bobhancock/gomatrix-ralph-strassens/gomatrix/matrix  363.304s
+	//
+	// ok   github.com/bobhancock/gomatrix-ralph-strassens/gomatrix/matrix  363.304s
 	//n :=  256
 
-    // *** Test killed: ran too long.
+	// *** Test killed: ran too long.
 	//n :=  512
-		A := ZerosSparse(n, n)
-		for i := 0; i < 36; i++ {
-			x := rand.Intn(6)
-			y := rand.Intn(6)
-			v := rand.Float64()
-			A.Set(y, x, v)
-		}
-		B := ZerosSparse(n, n)
-		for i := 0; i < 36; i++ {
-			x := rand.Intn(6)
-			y := rand.Intn(6)
-			v := rand.Float64()
-			B.Set(y, x, v)
-		}
+	A := ZerosSparse(n, n)
+	for i := 0; i < 36; i++ {
+		x := rand.Intn(6)
+		y := rand.Intn(6)
+		v := rand.Float64()
+		A.Set(y, x, v)
+	}
+	B := ZerosSparse(n, n)
+	for i := 0; i < 36; i++ {
+		x := rand.Intn(6)
+		y := rand.Intn(6)
+		v := rand.Float64()
+		B.Set(y, x, v)
+	}
 
-    // 2 MulStrassen's on chromebook at n=256
-    // ok   github.com/bobhancock/gomatrix-ralph-strassens/gomatrix/matrix  259.999s
+	// 2 MulStrassen's on chromebook at n=256
+	// ok   github.com/bobhancock/gomatrix-ralph-strassens/gomatrix/matrix  259.999s
 
-    // 2 MulSimple's on chromebook at n=256
-    // ok   github.com/bobhancock/gomatrix-ralph-strassens/gomatrix/matrix  473.440s
+	// 2 MulSimple's on chromebook at n=256
+	// ok   github.com/bobhancock/gomatrix-ralph-strassens/gomatrix/matrix  473.440s
 	//D := MulSimple(A, B)
 	D := MulStrassen(A, B)
 	E := MulSimple(A, B)
 	//E := MulStrassen(A, B)
 	//if !Equals(D, E) {
 	if !ApproxEquals(D, E, ε) {
-        fmt.Printf("D: \n", D)
-        fmt.Printf("E: \n", E)
+		fmt.Printf("D: \n", D)
+		fmt.Printf("E: \n", E)
 		t.Fail()
 	}
 }
-
 
 func TestMulSimple(t *testing.T) {
 	n := 8
@@ -74,30 +74,30 @@ func TestMulSimple(t *testing.T) {
 		E.Set(0, i, 4)
 		E.Set(i, i, 4)
 	}
-    /*
-	var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
-	var memprofile = flag.String("memprofile", "", "write memory profile to this file")
-	flag.Parse()
-	//Setup  profiling
-	if *cpuprofile != "" {
-		f, err := os.Create(*cpuprofile)
-		if err != nil {
-			log.Fatal(err)
+	/*
+		var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
+		var memprofile = flag.String("memprofile", "", "write memory profile to this file")
+		flag.Parse()
+		//Setup  profiling
+		if *cpuprofile != "" {
+			f, err := os.Create(*cpuprofile)
+			if err != nil {
+				log.Fatal(err)
+			}
+			pprof.StartCPUProfile(f)
+			defer pprof.StopCPUProfile()
 		}
-		pprof.StartCPUProfile(f)
-		defer pprof.StopCPUProfile()
-	}
 
-	if *memprofile != "" {
-		f, err := os.Create(*memprofile)
-		if err != nil {
-			log.Fatal(err)
+		if *memprofile != "" {
+			f, err := os.Create(*memprofile)
+			if err != nil {
+				log.Fatal(err)
+			}
+			pprof.WriteHeapProfile(f)
+			f.Close()
+			//return
 		}
-		pprof.WriteHeapProfile(f)
-		f.Close()
-		//return
-	}
-    */
+	*/
 	D := MulSimple(A, B)
 	if !Equals(D, E) {
 		t.Fail()
@@ -119,9 +119,9 @@ func BenchmarkMulSimple(b *testing.B) {
 		E.Set(0, i, 4)
 		E.Set(i, i, 4)
 	}
-    b.StartTimer()
+	b.StartTimer()
 	D := MulSimple(A, B)
-    b.StopTimer()
+	b.StopTimer()
 	if !Equals(D, E) {
 		b.Fail()
 	}
@@ -255,7 +255,7 @@ func TestMulNaive(t *testing.T) {
     // force out of memory
 	//n := 2000
 	//n := 8000
-	n := 2 
+	n := 2
 	//n := 3
 	//n := 4
 	//n := 200
@@ -280,7 +280,7 @@ func TestMulStrassenOnly(t *testing.T) {
 	// force out of memory
 	//n := 2000
 	//n := 8000
-	//n := 2 
+	//n := 2
 	//n := 1
 	//n := 3
 	//n := 4
@@ -289,19 +289,19 @@ func TestMulStrassenOnly(t *testing.T) {
 	n := 8
 	////fmt.Printf("init1\n")
 	/*
-		A := ZerosSparse(n, n)
-		for i := 0; i < 36; i++ {
-			x := rand.Intn(6)
-			y := rand.Intn(6)
-			A.Set(y, x, 1)
-		}
-	    ////fmt.Printf("init2\n")
-		B := ZerosSparse(n, n)
-		for i := 0; i < 36; i++ {
-			x := rand.Intn(6)
-			y := rand.Intn(6)
-			B.Set(y, x, 1)
-		}
+			A := ZerosSparse(n, n)
+			for i := 0; i < 36; i++ {
+				x := rand.Intn(6)
+				y := rand.Intn(6)
+				A.Set(y, x, 1)
+			}
+		    ////fmt.Printf("init2\n")
+			B := ZerosSparse(n, n)
+			for i := 0; i < 36; i++ {
+				x := rand.Intn(6)
+				y := rand.Intn(6)
+				B.Set(y, x, 1)
+			}
 	*/
 	/**/
 	A := ZerosSparse(n, n)

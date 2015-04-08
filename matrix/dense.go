@@ -7,10 +7,10 @@
 package matrix
 
 import (
-	"math/rand"
 	"errors"
 	"fmt"
 	"math"
+	"math/rand"
 )
 
 // A matrix backed by a flat array of all elements.
@@ -54,7 +54,7 @@ func (A DenseMatrix) Sqr() *DenseMatrix {
 // Sqrm squares every value in the matrix. In modifies the matix in place.
 func (A *DenseMatrix) Sqrm() {
 	numRows, numCols := A.GetSize()
-//	squared := Zeros(numRows, numCols)
+	//	squared := Zeros(numRows, numCols)
 
 	for i := 0; i < numRows; i++ {
 		for j := 0; j < numCols; j++ {
@@ -70,10 +70,10 @@ func (A *DenseMatrix) Sqrm() {
 func (A *DenseMatrix) FiltCol(min, max float64, col int) (*DenseMatrix, error) {
 	rows, cols := A.GetSize()
 	buf := make([]float64, 0)
-	
-	if col < 0 || col > cols - 1 {
-		matches := Zeros(1,1)
-		return matches, errors.New(fmt.Sprintf("FiltCol: Expected col vaule in range 0 to %d.  Received %d\n", cols -1, col))
+
+	if col < 0 || col > cols-1 {
+		matches := Zeros(1, 1)
+		return matches, errors.New(fmt.Sprintf("FiltCol: Expected col vaule in range 0 to %d.  Received %d\n", cols-1, col))
 	}
 
 	num_matches := 0
@@ -82,44 +82,43 @@ func (A *DenseMatrix) FiltCol(min, max float64, col int) (*DenseMatrix, error) {
 
 		if v >= min && v <= max {
 			for k := 0; k < cols; k++ {
-				buf = append(buf,  A.Get(i, k))
+				buf = append(buf, A.Get(i, k))
 			}
 			num_matches++
 		}
 	}
 
-	matches := MakeDenseMatrix(buf, len(buf) / cols, cols)
+	matches := MakeDenseMatrix(buf, len(buf)/cols, cols)
 	var err error = nil
-    if num_matches == 0 {
-        err = errors.New("matutil: no match")
-    }
+	if num_matches == 0 {
+		err = errors.New("matutil: no match")
+	}
 	return matches, err
- }
+}
 
 // FiltColMap find values that matches min <= A <= max for a specific column.
 //
 // Return Value
 //
-// matches - a map[int]float64 where the key is the row number in mat, 
+// matches - a map[int]float64 where the key is the row number in mat,
 // and the value is the value in the column specified by col.
 func (A DenseMatrix) FiltColMap(min, max float64, col int) (matches map[int]float64, err error) {
-	r := A.rows;
-    c := A.cols;
+	r := A.rows
+	c := A.cols
 	matches = make(map[int]float64)
-	
-	if col < 0 || col > c - 1 {
-		return matches, errors.New(fmt.Sprintf("matutil: Expected col vaule in range 0 to %d.  Received %d\n", c -1, col))
+
+	if col < 0 || col > c-1 {
+		return matches, errors.New(fmt.Sprintf("matutil: Expected col vaule in range 0 to %d.  Received %d\n", c-1, col))
 	}
 
 	for i := 0; i < r; i++ {
 		v := A.Get(i, col)
-		if v >= min &&  v <= max {
+		if v >= min && v <= max {
 			matches[i] = v
 		}
 	}
-	return 
- }
-
+	return
+}
 
 // AppendCol appends column to an existing matrix.  If length of column
 // is greater than the number of rows in the matrix, and error is returned.
@@ -155,7 +154,7 @@ func (A *DenseMatrix) AppendRow(r *DenseMatrix) (*DenseMatrix, error) {
 	rrows := r.rows
 	rcols := r.cols
 	if cols != rcols {
-		return Zeros(1,1), errors.New(fmt.Sprintf("Expect %d by %d matrix.  Received %d by %d matrix.\n", rows,cols, rrows, rcols))
+		return Zeros(1, 1), errors.New(fmt.Sprintf("Expect %d by %d matrix.  Received %d by %d matrix.\n", rows, cols, rrows, rcols))
 	}
 
 	source := append(A.Array(), r.Array()...)
@@ -171,7 +170,7 @@ func (A *DenseMatrix) RowExists(r *DenseMatrix) bool {
 	if cols != rcols {
 		return false
 	}
-	
+
 	for i := 0; i < rows; i++ {
 		rowexists := true
 		for j := 0; j < cols; j++ {
@@ -189,7 +188,7 @@ func (A *DenseMatrix) RowExists(r *DenseMatrix) bool {
 
 // ColSlice retrieves the values in column i of a matrix as a slice
 func (A DenseMatrix) ColSlice(col int) []float64 {
-    rows := A.rows
+	rows := A.rows
 	r := make([]float64, rows)
 	for j := 0; j < rows; j++ {
 		r[j] = A.Get(j, col)
@@ -204,7 +203,7 @@ func (A DenseMatrix) SumCol(col int) float64 {
 	sum := float64(0)
 
 	for i := 0; i < numRows; i++ {
-		sum += A.Get(i,col)
+		sum += A.Get(i, col)
 	}
 	return sum
 }
@@ -257,7 +256,7 @@ func (A DenseMatrix) SumRows() *DenseMatrix {
 	return sums
 }
 
-// SumRowsM calculates the sum of each row in a matrix and modifes the first 
+// SumRowsM calculates the sum of each row in a matrix and modifes the first
 // column of the row so that it contains the sum.  This is for performance
 // to avoid allocations made by Zeros()
 func (A *DenseMatrix) SumRowsM() {
@@ -369,13 +368,13 @@ func (A *DenseMatrix) GetRowVector(i int) *DenseMatrix {
 	return A.GetMatrix(i, 0, 1, A.cols)
 }
 
-// SetRowVector sets a row in the matrix to the values in row 0 of the 
-// source matrix.  If there are more columns in the source than in 
+// SetRowVector sets a row in the matrix to the values in row 0 of the
+// source matrix.  If there are more columns in the source than in
 // the target the target columns are filled up to number of columns.
 func (A *DenseMatrix) SetRowVector(src *DenseMatrix, row int) {
 	_, cols := A.GetSize()
-	for i := 0; i < cols; i ++ {
-		A.Set(row, i, src.Get(0,i))
+	for i := 0; i < cols; i++ {
+		A.Set(row, i, src.Get(0, i))
 	}
 }
 
@@ -599,3 +598,28 @@ func MakeDenseMatrixStacked(data [][]float64) *DenseMatrix {
 }
 
 func (A *DenseMatrix) String() string { return String(A) }
+
+// Calculate distance matrix for a given r norm.  Use r = 2 for Euclidean.
+func (A *DenseMatrix) Distance(r float64, lower bool) *DenseMatrix {
+	B := Zeros(A.Cols(), A.Cols())
+
+	ir := 1.0 / r
+	for i := 0; i < A.Cols(); i++ {
+		for j := i + 1; j < A.Cols(); j++ {
+			colI := A.ColSlice(i)
+			colJ := A.ColSlice(j)
+
+			diffs := 0.0
+			for index, _ := range colI {
+				diffs += math.Pow(math.Abs(colI[index]-colJ[index]), r)
+			}
+
+			dist := math.Pow(diffs, ir)
+			B.Set(i, j, dist)
+			if lower {
+				B.Set(j, i, dist)
+			}
+		}
+	}
+	return B
+}
