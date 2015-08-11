@@ -8,6 +8,7 @@ import (
 	//"os"
 	//"log"
 	//"flag"
+
 	"fmt"
 	"math/rand"
 	"testing"
@@ -527,6 +528,89 @@ func TestStack_Sparse(t *testing.T) {
 		for j := 0; j < B.Cols(); j++ {
 			if C.Get(i+A.Rows(), j) != B.Get(i, j) {
 				t.Fail()
+			}
+		}
+	}
+}
+
+func makeTestSparseMatrix(rows, cols int) *SparseMatrix {
+	mat := ZerosSparse(rows, cols)
+	for i := 0; i < rows; i++ {
+		for j := 0; j < cols; j++ {
+			mat.Set(i, j, 1.0*float64(i)+0.1*float64(j))
+		}
+	}
+	return mat
+}
+
+func TestSparseJsonEncode(t *testing.T) {
+	mat := makeTestSparseMatrix(2, 3)
+
+	json, err := mat.MarshalJSON()
+	if err != nil {
+		t.Fatalf("%+v", err)
+	}
+
+	// because maps iterate randomly, the output order of the keys/values will be non deterministic,
+	// so we can't do a direct string comparison to determine validity. the serialization should,
+	// however, be the same amount of bytes
+	if len(json) != 76 {
+		t.Fail()
+	}
+}
+
+func TestSparseJsonDecode(t *testing.T) {
+	json := []byte(`{"Rows":2,"Cols":3,"Keys":[1,2,3,4,5],"Values":[0.1,0.2,1,1.1,1.2],"Step":3}`)
+
+	mat := new(SparseMatrix)
+	err := mat.UnmarshalJSON(json)
+	if err != nil {
+		t.Fail()
+	}
+
+	if mat.Cols() != 3 || mat.Rows() != 2 {
+		t.Fail()
+	}
+
+	for i := 0; i < mat.Rows(); i++ {
+		for j := 0; j < mat.Cols(); j++ {
+			value := 1.0*float64(i) + 0.1*float64(j)
+			if mat.Get(i, j) != value {
+				t.Fail()
+			}
+		}
+	}
+}
+
+func TestSparseGobEncode(t *testing.T) {
+	mat := makeTestSparseMatrix(2, 3)
+	gob, err := mat.GobEncode()
+	if err != nil {
+		t.Fail()
+	}
+
+	if len(gob) != 190 {
+		t.Fail()
+	}
+}
+
+func TestSparseGobDecode(t *testing.T) {
+	b := []byte{87, 255, 129, 3, 1, 1, 24, 115, 101, 114, 105, 97, 108, 105, 122, 97, 98, 108, 101, 83, 112, 97, 114, 115, 101, 77, 97, 116, 114, 105, 120, 1, 255, 130, 0, 1, 5, 1, 4, 82, 111, 119, 115, 1, 4, 0, 1, 4, 67, 111, 108, 115, 1, 4, 0, 1, 4, 75, 101, 121, 115, 1, 255, 132, 0, 1, 6, 86, 97, 108, 117, 101, 115, 1, 255, 134, 0, 1, 4, 83, 116, 101, 112, 1, 4, 0, 0, 0, 19, 255, 131, 2, 1, 1, 5, 91, 93, 105, 110, 116, 1, 255, 132, 0, 1, 4, 0, 0, 23, 255, 133, 2, 1, 1, 9, 91, 93, 102, 108, 111, 97, 116, 54, 52, 1, 255, 134, 0, 1, 8, 0, 0, 57, 255, 130, 1, 4, 1, 6, 1, 5, 8, 10, 2, 4, 6, 1, 5, 248, 154, 153, 153, 153, 153, 153, 241, 63, 248, 51, 51, 51, 51, 51, 51, 243, 63, 248, 154, 153, 153, 153, 153, 153, 185, 63, 248, 154, 153, 153, 153, 153, 153, 201, 63, 254, 240, 63, 1, 6, 0}
+	mat := new(SparseMatrix)
+	err := mat.GobDecode(b)
+	if err != nil {
+		t.Fatal()
+	}
+
+	if mat.Cols() != 3 || mat.Rows() != 2 {
+		t.Fatal()
+	}
+
+	for i := 0; i < mat.Rows(); i++ {
+		for j := 0; j < mat.Cols(); j++ {
+			value := 1.0*float64(i) + 0.1*float64(j)
+			if mat.Get(i, j) != value {
+				t.Fatal()
 			}
 		}
 	}
