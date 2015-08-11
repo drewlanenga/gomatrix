@@ -5,6 +5,7 @@
 package matrix
 
 import (
+	"bytes"
 	"fmt"
 	"math/rand"
 	"testing"
@@ -1038,5 +1039,78 @@ func TestDistance(t *testing.T) {
 	dist = m.Distance(1.0, false)
 	if dist.Get(1, 0) != 0.0 {
 		t.Fail()
+	}
+}
+
+func TestDenseJsonEncode(t *testing.T) {
+	mat := MakeDenseMatrix([]float64{0.0, 0.1, 0.2, 1.0, 1.1, 1.2}, 2, 3)
+
+	json, err := mat.MarshalJSON()
+	if err != nil {
+		t.Fail()
+	}
+
+	if string(json) != `{"Rows":2,"Cols":3,"Elements":[0,0.1,0.2,1,1.1,1.2],"Step":3}` {
+		t.Fail()
+	}
+}
+
+func TestDenseJsonDecode(t *testing.T) {
+	json := []byte(`{"Rows":2,"Cols":3,"Elements":[0,0.1,0.2,1,1.1,1.2],"Step":3}`)
+
+	mat := new(DenseMatrix)
+	err := mat.UnmarshalJSON(json)
+	if err != nil {
+		t.Fail()
+	}
+
+	if mat.Cols() != 3 || mat.Rows() != 2 {
+		t.Fail()
+	}
+
+	for i := 0; i < mat.Rows(); i++ {
+		for j := 0; j < mat.Cols(); j++ {
+			value := 1.0*float64(i) + 0.1*float64(j)
+			if mat.Get(i, j) != value {
+				t.Fail()
+			}
+		}
+	}
+}
+
+func TestDenseGobEncode(t *testing.T) {
+	mat := MakeDenseMatrix([]float64{0.0, 0.1, 0.2, 1.0, 1.1, 1.2}, 2, 3)
+	gob, err := mat.GobEncode()
+	if err != nil {
+		t.Fail()
+	}
+
+	b := []byte{78, 255, 129, 3, 1, 1, 23, 115, 101, 114, 105, 97, 108, 105, 122, 97, 98, 108, 101, 68, 101, 110, 115, 101, 77, 97, 116, 114, 105, 120, 1, 255, 130, 0, 1, 4, 1, 4, 82, 111, 119, 115, 1, 4, 0, 1, 4, 67, 111, 108, 115, 1, 4, 0, 1, 8, 69, 108, 101, 109, 101, 110, 116, 115, 1, 255, 132, 0, 1, 4, 83, 116, 101, 112, 1, 4, 0, 0, 0, 23, 255, 131, 2, 1, 1, 9, 91, 93, 102, 108, 111, 97, 116, 54, 52, 1, 255, 132, 0, 1, 8, 0, 0, 51, 255, 130, 1, 4, 1, 6, 1, 6, 0, 248, 154, 153, 153, 153, 153, 153, 185, 63, 248, 154, 153, 153, 153, 153, 153, 201, 63, 254, 240, 63, 248, 154, 153, 153, 153, 153, 153, 241, 63, 248, 51, 51, 51, 51, 51, 51, 243, 63, 1, 6, 0}
+
+	if !bytes.Equal(gob, b) {
+		t.Fail()
+	}
+}
+
+func TestDenseGobDecode(t *testing.T) {
+	b := []byte{78, 255, 129, 3, 1, 1, 23, 115, 101, 114, 105, 97, 108, 105, 122, 97, 98, 108, 101, 68, 101, 110, 115, 101, 77, 97, 116, 114, 105, 120, 1, 255, 130, 0, 1, 4, 1, 4, 82, 111, 119, 115, 1, 4, 0, 1, 4, 67, 111, 108, 115, 1, 4, 0, 1, 8, 69, 108, 101, 109, 101, 110, 116, 115, 1, 255, 132, 0, 1, 4, 83, 116, 101, 112, 1, 4, 0, 0, 0, 23, 255, 131, 2, 1, 1, 9, 91, 93, 102, 108, 111, 97, 116, 54, 52, 1, 255, 132, 0, 1, 8, 0, 0, 51, 255, 130, 1, 4, 1, 6, 1, 6, 0, 248, 154, 153, 153, 153, 153, 153, 185, 63, 248, 154, 153, 153, 153, 153, 153, 201, 63, 254, 240, 63, 248, 154, 153, 153, 153, 153, 153, 241, 63, 248, 51, 51, 51, 51, 51, 51, 243, 63, 1, 6, 0}
+
+	mat := new(DenseMatrix)
+	err := mat.GobDecode(b)
+	if err != nil {
+		t.Fail()
+	}
+
+	if mat.Cols() != 3 || mat.Rows() != 2 {
+		t.Fail()
+	}
+
+	for i := 0; i < mat.Rows(); i++ {
+		for j := 0; j < mat.Cols(); j++ {
+			value := 1.0*float64(i) + 0.1*float64(j)
+			if mat.Get(i, j) != value {
+				t.Fail()
+			}
+		}
 	}
 }
