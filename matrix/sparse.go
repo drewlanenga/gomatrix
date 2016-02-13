@@ -20,6 +20,14 @@ type SparseMatrix struct {
 	step int
 }
 
+func copyElements(elements map[int]float64) map[int]float64 {
+	newelements := make(map[int]float64, len(elements))
+	for k, v := range elements {
+		newelements[k] = v
+	}
+	return newelements
+}
+
 func (A *SparseMatrix) Get(i, j int) float64 {
 	i = i % A.rows
 	if i < 0 {
@@ -123,7 +131,7 @@ func (A *SparseMatrix) GetMatrix(i, j, rows, cols int) (subMatrix *SparseMatrix)
 		i = maxInt(0, i)
 		j = maxInt(0, j)
 		rows = minInt(A.rows-i, rows)
-		rows = minInt(A.cols-j, cols)
+		cols = minInt(A.cols-j, cols)
 	}
 
 	subMatrix = new(SparseMatrix)
@@ -132,7 +140,7 @@ func (A *SparseMatrix) GetMatrix(i, j, rows, cols int) (subMatrix *SparseMatrix)
 	subMatrix.offset = (i+A.offset/A.step)*A.step + (j + A.offset%A.step)
 	//fmt.Printf("Setting offset in submatrix i:%v j:%v to %v\n",i,j,subMatrix.offset)
 	subMatrix.step = A.step
-	subMatrix.elements = A.elements
+	subMatrix.elements = copyElements(A.elements)
 	for index, _ := range subMatrix.elements {
 		ii, jj := subMatrix.GetRowColIndex(index)
 		//if (ii<i || ii>i+rows || jj<j || jj>j+cols){
@@ -149,14 +157,14 @@ func (A *SparseMatrix) GetMatrix(i, j, rows, cols int) (subMatrix *SparseMatrix)
 Gets a reference to a column vector.
 */
 func (A *SparseMatrix) GetColVector(j int) *SparseMatrix {
-	return A.GetMatrix(0, j, A.rows, j+1)
+	return A.GetMatrix(0, j, A.rows, 1)
 }
 
 /*
 Gets a reference to a row vector.
 */
 func (A *SparseMatrix) GetRowVector(i int) *SparseMatrix {
-	return A.GetMatrix(i, 0, i+1, A.cols)
+	return A.GetMatrix(i, 0, 1, A.cols)
 }
 
 /*

@@ -559,6 +559,33 @@ func TestSparseJsonEncode(t *testing.T) {
 	}
 }
 
+func TestSparseVectors(t *testing.T) {
+	nrow := 3
+	ncol := 4
+	m := makeTestSparseMatrix(nrow, ncol)
+
+	colSums := []float64{3.0, 3.3, 3.6, 3.9}
+	for j := 0; j < ncol; j++ {
+		col := m.GetColVector(j)
+		if !approxEqual(colSums[j], col.OneNorm(), 1) {
+			t.Fail()
+		}
+	}
+
+	rowSums := []float64{0.6, 4.6, 8.6}
+	for i := 0; i < nrow; i++ {
+		row := m.GetRowVector(i)
+		if !approxEqual(rowSums[i], row.OneNorm(), 1) {
+			t.Fail()
+		}
+	}
+}
+
+func approxEqual(f1, f2 float64, precision int) bool {
+	format := fmt.Sprintf("%s%s%d%s", "%", ".", precision, "f")
+	return fmt.Sprintf(format, f1) == fmt.Sprintf(format, f2)
+}
+
 func TestSparseJsonDecode(t *testing.T) {
 	json := []byte(`{"Rows":2,"Cols":3,"Keys":[1,2,3,4,5],"Values":[0.1,0.2,1,1.1,1.2],"Step":3}`)
 
